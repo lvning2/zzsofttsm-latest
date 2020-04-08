@@ -1,0 +1,50 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    username: root
+    password: 107754
+    url: jdbc:mysql://www.lvning.club:3306/zzsofttsm?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    #url: jdbc:mysql://192.168.15.135:3317/zzsofttsm?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    filters: stat,wall,slf4j
+    schema: classpath:initDB.sql
+  aop:
+    proxy-target-class: true
+  jackson:
+    time-zone: GMT+8
+  jpa:
+    show-sql: true
+
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
+  main:
+    #当遇到同样名字的时候，是否允许覆盖注册
+    allow-bean-definition-overriding: true
+  application:
+    user:
+      # 123
+      initPassword: $2a$10$.zO.3bDX2Z01UhBmUK1icubTKvaYskFyqAxohtcnoE4OtxyZOq31G
+
+#定时任务，统计当日考勤，python爬虫脚本路径
+zzsofttsm:
+  python:
+    crawler: python F:\\lvning\\start\\pa.py
+
+
+shiro:
+  loginUrl: /login.html
+  unauthorizedUrl: /unauth
+  web:
+    enabled: true
+swagger:
+  enabled: true
+  base-package: com.zzsoft.zzsofttsm.controller
+
+
+
+

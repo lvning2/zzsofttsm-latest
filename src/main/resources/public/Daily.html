@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>众智 - 产品一部管理系统</title>
+
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+
+
+		<link rel="stylesheet" href="/layui/css/layui.css">
+		<script src="/js/jquery-3.4.1.js" type="text/javascript"> </script>
+		<script src="/layui/layui.js"></script>
+		<script>
+			document.write('<script src="/js/Daily.js?'+new Date().getTime()+'" type="text/javascript"><\/script>')
+			document.write('<script src="/js/listData.js?"'+new Date().getTime()+' type="text/javascript"> <\/script>')
+		</script>
+
+<!--		<script src="/js/Daily.js" type="text/javascript"> </script>-->
+<!--		<script src="/js/listData.js" type="text/javascript"> </script>-->
+
+		<script type="text/javascript">
+			var uname = localStorage.getItem('uname');
+			var upwd = localStorage.getItem('upwd');
+			if (!uname || !upwd) {
+				window.location.href = "login.html";
+			}
+		</script>
+
+
+
+	</head>
+	<body class="layui-layout-body">
+		<!-- 弹出日志新建窗口 -->
+		<form id="addform" class="layui-form" lay-filter="add-form" style="display: none;">
+			<div class="layui-form-item">
+				<label class="layui-form-label">日 期： </label>
+				<div class="layui-input-block" style="margin-bottom: 10px; margin-top: 20px; width: 140px;">
+					<input type="text" name="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" readonly>
+				</div>
+				<label class="layui-form-label">昨天工作： </label>
+				<div class="layui-input-block" style="margin-bottom: 10px; margin-right: 10px;">
+					<textarea style="height: 192px;" name="yestWork" placeholder="请输入昨天工作内容" class="layui-textarea" id="yesterdayContent"></textarea>
+				</div>
+				<label class="layui-form-label">今日计划： </label>
+				<div class="layui-input-block" style="margin-bottom: 20px; margin-right: 10px;">
+					<textarea style="height: 192px;" name="todayWork" placeholder="请输入内容" class="layui-textarea" id="todayContent"></textarea>
+				</div>
+			</div>
+		</form>
+		<!-- 弹出日志新建窗口结束 -->
+
+		<!-- 编辑设备信息窗口 -->
+		<form id="editE" class="layui-form" action="" lay-filter="example" style="display: none;">
+
+			<input name="id" type="hidden" />
+			<input name="personLiableId" type="hidden" />
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">设备编号</label>
+				<div class="layui-input-inline">
+					<input type="text" id="equipmentNumber"  lay-verify="required" lay-reqtext="请输入编号" name="equipmentNumber" autofocus autocomplete="off" placeholder="编号格式：D0491" class="layui-input">
+
+				</div><span id="entext" style="color: red;"></span>
+			</div>
+			<div class="layui-form-item ">
+				<label class="layui-form-label">责任人</label>
+				<div class=" layui-input-inline">
+					<input disabled type="text" name="personName" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label layui-form-item">设备类型</label>
+				<div class="layui-input-inline">
+					<select name="equipmentType" lay-filter="aihao">
+						<option value="台式电脑">台式电脑</option>
+						<option value="笔记本">笔记本</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否联网</label>
+				<div class="layui-input-block">
+					<input type="radio" name="isNetwork" value="1" title="是" checked="">
+					<input type="radio" name="isNetwork" value="0" title="否">
+					<input type="radio" name="isNetwork" value="2" title="内外网">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+<!--				<label class="layui-form-label">硬盘容量</label>-->
+				<div class="layui-inline">
+					<label class="layui-form-label">硬盘容量</label>
+					<div class="layui-input-inline" style="width: 100px;">
+						<input type="text" name="hdCapacity1" placeholder="机械" autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-form-mid">+</div>
+					<div class="layui-input-inline" style="width: 100px;">
+						<input type="text" name="hdCapacity2" placeholder="固态" autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-form-mid layui-word-aux layui-input-inline">内外网请写总容量</div>
+				</div>
+
+<!--				<div class="layui-input-block">-->
+<!--					<input type="text" name="hdCapacity" lay-verify="title" autocomplete="off" placeholder="请输入硬盘容量" class="layui-input">-->
+<!--				</div>-->
+			</div>
+
+			<div class="layui-form-item layui-form-item">
+				<label class="layui-form-label">CPU</label>
+				<input type="text" name="cpuName" id="cpuName" placeholder="请输入" style="position:absolute;z-index:2;"  onkeyup="search1()" autocomplete="off" class="layui-input layui-input-inline">
+				<div class=" layui-input-inline">
+					<select id="cpuName_select" class="layui-select" lay-filter="cpuName_select">
+						<option value="AMD Ryzen 5">AMD Ryzen 5</option>
+						<option value="i3-3220">i3-3220</option>
+						<option value="i3-4160">i3-4160</option>
+						<option value="i3-4170">i3-4170</option>
+						<option value="i5-3470">i5-3470</option>
+						<option value="i5-4590">i5-4590</option>
+						<option value="i5-9400F">i5-9400F</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">显卡</label>
+				<input type="text" name="graphicsCardName" id="graphicsCardName" placeholder="请输入" style="position:absolute;z-index:2;"  onkeyup="search2()" autocomplete="off" class="layui-input layui-input-inline">
+				<div class=" layui-input-inline">
+					<select id="graphicsCardName_select" lay-filter="graphicsCardName_select">
+						<option value="集成显卡">集成显卡</option>
+						<option value="GTX 640">GTX 640</option>
+						<option value="GTX 750">GTX 750</option>
+						<option value="GTX 950">GTX 950</option>
+						<option value="GTX 1050">GTX 1050</option>
+						<option value="GTX 1050 Ti">GTX 1050 Ti</option>
+						<option value="K620">K620</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">内存</label>
+				<div class="layui-input-inline">
+					<select name="memory" lay-filter="aihao">
+						<option value="4"> 4G</option>
+						<option value="8"> 8G</option>
+						<option value="12">12G</option>
+						<option value="16">16G</option>
+						<option value="24">24G</option>
+						<option value="32">32G</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-form-item">
+				<label class="layui-form-label">IP地址</label>
+				<div class="layui-input-inline">
+					<input type="text" name="ipAddress" lay-verify="title" autocomplete="off" placeholder="自动获取" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">硬盘序列号</label>
+				<div class="layui-input-inline">
+<!--					<input type="textarea" name="hdSerialNumber" lay-verify="title" autocomplete="off" placeholder="请输入硬盘序列号" class="layui-input">-->
+					<textarea name="hdSerialNumber" lay-verify="title" placeholder="请输入硬盘序列号,多个请换行" class="layui-textarea"></textarea>
+				</div>
+			</div>
+
+
+
+			<div class="layui-form-item layui-form-item">
+				<label class="layui-form-label">MAC地址</label>
+				<div class="layui-input-inline">
+<!--					<input type="text" name="macAddress" lay-verify="title" autocomplete="off" placeholder="自动获取" class="layui-input">-->
+					<textarea name="macAddress" lay-verify="title" name="macAddress" lay-verify="title" placeholder="请输入MAC地址,多个请换行" class="layui-textarea"></textarea>
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-form-item">
+				<label class="layui-form-label">操作系统版本</label>
+				<div class="layui-input-inline">
+					<select name="osVersion" lay-filter="aihao">
+						<option value="Win 10">Win 10</option>
+						<option value="Win 7">Win 7</option>
+						<option value="IOS">IOS</option>
+						<option value="Win server">Win server</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-inline layui-form-item">
+				<label class="layui-form-label">安装时间</label>
+				<div class="layui-input-inline">
+					<input type="text" name="osInstallTime" id="date1" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">品牌型号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="brandModel" lay-verify="title" autocomplete="off" placeholder="无" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">锁号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="lockNumber" lay-verify="title" autocomplete="off" placeholder="请输入锁号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">显示器尺寸</label>
+				<div class="layui-input-inline">
+					<input type="text" name="monitor" lay-verify="title" autocomplete="off" placeholder="请输入显示器尺寸" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">放置位置</label>
+				<div class="layui-input-inline">
+					<input type="text" name="setPosition" lay-verify="title" value="研发一部" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">使用部门</label>
+				<div class="layui-input-inline">
+					<input type="text" name="useDepartment" lay-verify="title" autocomplete="off" value="研发一部" class="layui-input">
+				</div>
+			</div>
+
+
+
+		</form>
+
+
+		<!-- 编辑设备信息窗口结束 -->
+
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header" style="background-color: #545454;">
+				<div class="layui-logo">
+					<p style="color: white;">产品一部管理系统</p>
+				</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-left">
+					<li class="layui-nav-item  layui-this"><a href="">日志</a></li>
+					<li class="layui-nav-item"><a href="#">周报</a></li>
+					<li class="layui-nav-item"><a href="javascript:show_worktime()">考勤</a></li>
+					<li class="layui-nav-item"><a href="javascript:show_equipment()">资产</a></li>
+				</ul>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a href="javascript:;">
+							<i class="layui-icon">&#xe66f</i>
+							<!-- <img src="http://t.cn/RCzsdCq" class="layui-nav-img"> -->
+							<span id="user_show">试验</span>
+						</a>
+						<dl class="layui-nav-child">
+							<dd><a href="javascript:void(0)">基本资料</a></dd>
+							<dd><a href="javascript:void(0)">修改密码</a></dd>
+						</dl>
+					</li>
+					<li class="layui-nav-item"><a href="javascript:user_exit()">退出</a></li>
+				</ul>
+			</div>
+
+			<!-- 侧边栏人员树 -->
+			<div class="layui-side layui-bg-black">
+				<div class="layui-side-scroll" id="memberTree" style="width: 200px; background-color: #eeeeee">
+				</div>
+			</div>
+
+			<!-- 主本内容 -->
+			<div class="layui-body" style="background-color: wheat; bottom: 0px;padding-right:2%; ">
+				<!-- 内容主体区域 -->
+				<!-- <div style="padding: 15px;">内容主体区域</div> -->
+				<div class="layui-form layui-form-item">
+					<label id='userShow' class="layui-form-label" style="width: 100px;"> --- 的日志：</label>
+					<div id="daySelect" class="layui-input-block" >
+						<input type="radio" name="day" value="today" title="今天" lay-filter="day" checked>
+						<input type="radio" name="day" value="yesterday" title="昨天" lay-filter="day">
+						<input type="radio" name="day" value="beforeyesterday" title="前天" lay-filter="day" >
+						<input type="radio" name="day" value="anyday" title="任意一天" lay-filter="day" >
+					</div>
+					<input type="text" class="layui-input" id="test1" placeholder="yyyy-MM-dd" style="height: 37px;width: 100px;position: absolute;left: 400px;top: 0;display: none;cursor: pointer;">
+				</div>
+				<!-- 日志内容 -->
+				<div id="dailyContextDiv">
+					<ul id="dailyContext" class="layui-timeline" style="margin-left: 20px;"> </ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		//JavaScript代码区域
+		layui.use('element', function() {
+			var element = layui.element;
+		});
+	</script>
+
+	<script type="text/html" id="toolbarEquipment">
+		<div id="mytest" class="layui-btn-container">
+			<button class="layui-btn layui-btn-sm" lay-event="insertEquipment">新增</button>
+			<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteEquipment">删除</button>
+			{{#  if (myname=='李娴'){   }}
+			<button id="daochu"  class="layui-btn layui-btn-sm layui-btn-danger"  lay-event="export">导出</button>
+			{{# }else{   }}
+			<button id="daochu"  style="display: none;" class="layui-btn layui-btn-sm layui-btn-danger"  lay-event="export">导出</button>
+			{{#		}		}}
+		</div>
+
+
+
+
+	</script>
+
+	<script>
+
+		$(function () {			// 获取所有显卡开始
+			$.ajax({
+				url:ipAddr+"computer/getAllGraphicsCard",
+				type:'get',
+				success:function (data) {
+					$("#graphicsCard").empty();
+					var gCardStr="";
+					for (var i=0;i<data.data.length;i++){
+						gCardStr+="<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>"
+					}
+					$("#graphicsCard").append(gCardStr);
+				}
+			})	// ajax 结束
+		})			//  获取所有显卡结束
+
+		$(function () {			// 获取所有CPU开始
+			$.ajax({
+				url:ipAddr+"computer/getAllCpu",
+				type:'get',
+				success:function (data) {
+					$("#cpu").empty();
+					var gCardStr="";
+					for (var i=0;i<data.data.length;i++){
+						gCardStr+="<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>"
+					}
+					$("#cpu").append(gCardStr);
+				}
+			})	// ajax 结束
+		})			//  获取所有CPU结束
+
+	</script>
+
+</html>
